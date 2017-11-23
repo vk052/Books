@@ -27,7 +27,8 @@ if(isset($_POST['autor'])){
   echo 'Preis darf nicht leer sein';
 		die;
 }
-  $stmt = "INSERT INTO `books` (`autor`, `titel`, `ISBN`,`preis`) VALUES ('" . $autor . "', '" . $titel . "', '" . $ISBN ."','" . $preis ."');";
+  $stmt = "UPDATE `books` SET `autor` = '" . $autor . "', `titel` = '" . $titel . "', `ISBN` = '" . $ISBN ."', `preis` = '" . $preis ."' WHERE `books`.`id` = 1";
+	
   $result = $link->query($stmt);
 
   $status = ">> User book";
@@ -36,6 +37,37 @@ else {
   $status = ">> noch nichts gesendet";
 }
    
+
+if (isset($_GET['ID'])){
+ 	$userID = $_GET['ID']; 
+ 
+ 	$stmt = "SELECT * FROM `books` WHERE `id` = 1";
+ 	$result = $link->query($stmt);
+ 
+ 	$id = ""; 
+ 	$autor = ""; 
+ 	$titel = ""; 
+ 	$ISBN = "";
+	$preis = "";
+ 
+ 	if ($result->num_rows > 0){
+ 		while ($row = mysqli_fetch_row($result)){
+ 			$id = $row[0]; 
+ 			$autor = $row[1]; 
+ 			$titel = $row[2];
+ 			$ISBN = $row[3];
+			$preis = $row[4];
+ 		}
+ 	}
+ }
+ else {
+ 	die("NO ID PROVIDED"); 
+ }
+
+
+
+
+
 ?>
 <!doctype html>
 <html lang="de">
@@ -52,7 +84,7 @@ else {
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
           <form method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>">
-            <h1>Add Books</h1>
+            <h1>Edit Books</h1>
 			<h2><?php echo $status ?></h2>
             <div class="form-group">
               <label for="autor">Autor:</label>
