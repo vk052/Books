@@ -5,7 +5,18 @@
     $stmt = "SELECT * FROM `books`";
     $result = $link->query($stmt);
 
+
+
 $status = "";
+
+          if (! empty($_GET['ID'])){
+                       $ID = $_GET['ID'];
+          }
+
+          else if (! empty($_POST['ID']))
+	
+	
+
 if(isset($_POST['autor'])){
   $autor = $_POST['autor'];
 	if(empty($autor)) {
@@ -27,45 +38,39 @@ if(isset($_POST['autor'])){
   echo 'Preis darf nicht leer sein';
 		die;
 }
-  $stmt = "UPDATE `books` SET `autor` = '" . $autor . "', `titel` = '" . $titel . "', `ISBN` = '" . $ISBN ."', `preis` = '" . $preis ."' WHERE `books`.`id` = 1";
+	$ID = $_POST['ID'];
+	if(empty($ID)) {
+  echo 'ID darf nicht leer sein';
+		die;
+}
+	
+	
+  $stmt = "UPDATE `books` SET `autor` = '" . $autor . "', `titel` = '" . $titel . "', `ISBN` = '" . $ISBN ."', `preis` = '" . $preis ."' WHERE `books`.`id` = " . $ID ."";
 	
   $result = $link->query($stmt);
 
-  $status = ">> User book";
+  $status = ">> Book edited";
 }
 else {
-  $status = ">> noch nichts gesendet";
+  $status = ">> nothing edited yet";
 }
-   
-
-if (isset($_GET['ID'])){
- 	$userID = $_GET['ID']; 
- 
- 	$stmt = "SELECT * FROM `books` WHERE `id` = 1";
- 	$result = $link->query($stmt);
- 
- 	$id = ""; 
- 	$autor = ""; 
- 	$titel = ""; 
- 	$ISBN = "";
-	$preis = "";
- 
- 	if ($result->num_rows > 0){
- 		while ($row = mysqli_fetch_row($result)){
- 			$id = $row[0]; 
- 			$autor = $row[1]; 
- 			$titel = $row[2];
- 			$ISBN = $row[3];
-			$preis = $row[4];
- 		}
- 	}
- }
- else {
- 	die("NO ID PROVIDED"); 
- }
+  
 
 
+$stmt = "SELECT * FROM `books` WHERE `ID`= $ID";
+    $result = $link->query($stmt);
 
+if ($result->num_rows > 0){
+	 while ($row = mysqli_fetch_row($result)){
+        $autor = $row[1];
+		$titel = $row[2];
+		$ISBN = $row[3];
+		$preis = $row[4];
+      }
+}
+else {
+	die("User mit ID " . $ID . " not found");
+}
 
 
 ?>
@@ -86,23 +91,27 @@ if (isset($_GET['ID'])){
           <form method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>">
             <h1>Edit Books</h1>
 			<h2><?php echo $status ?></h2>
+		      
+			  
+			  <input type="hidden" class="form-control" id="ID" name="ID" value ="<?php echo $ID ?>">
+				
             <div class="form-group">
               <label for="autor">Autor:</label>
-              <input type="text" class="form-control" id="autor" name="autor">
+              <input type="text" class="form-control" id="autor" name="autor" value="<?php echo $autor ?>">
             </div>
             <div class="form-group">
               <label for="titel">Titel:</label>
-              <input type="text" class="form-control" id="titel" name="titel">
+              <input type="text" class="form-control" id="titel" name="titel" value="<?php echo $titel ?>">
             </div>
             <div class="form-group">
               <label for="ISBN">ISBN:</label>
-              <input type="text" class="form-control" id="ISBN" name="ISBN">
+              <input type="text" class="form-control" id="ISBN" name="ISBN" value="<?php echo $ISBN ?>">
             </div>
 			  <div class="form-group">
               <label for="preis">Preis:</label>
-              <input type="text" class="form-control" id="preis" name="preis">
+              <input type="text" class="form-control" id="preis" name="preis" value="<?php echo $preis ?>">
             </div>
-            <button type="submit" class="btn btn-default" name="btn-save">Add book</button>
+            <button type="submit" class="btn btn-default" name="btn-save">Edit book</button>
 
           </form>
 
@@ -110,5 +119,5 @@ if (isset($_GET['ID'])){
         </div>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-</body>
+   </body>
 </html>
